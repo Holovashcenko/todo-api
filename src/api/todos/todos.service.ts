@@ -5,8 +5,8 @@ export const todoService: {
   getAll: () => Promise<Todo[]>
   create: (data: Omit<Todo, 'id'>) => Promise<Todo>
   getById: (id: number) => Promise<Todo>
-  update: (id: number, data: Partial<Todo>) => Promise<Todo>
-  delete: (id: number) => Promise<void>
+  update: (id: number, data: Partial<Todo>, ownerId: number) => Promise<Todo>
+  delete: (id: number, ownerId: number) => Promise<void>
 } = {
   getAll: async () => {
     const todos = await todoRepository.getAll()
@@ -23,13 +23,27 @@ export const todoService: {
     return todo
   },
 
-  update: async (id, data) => {
-    await todoRepository.update(id, data)
+  update: async (id, data, ownerId) => {
     const todo = await todoRepository.getById(id)
-    return todo
+    if (!todo) {
+      throw new Error(`Todo with id ${id} not found`)
+    }
+    if (todo.user_id !== ownerId) {
+      throw new Error(`You are not the owner of todo with id ${id}`)
+    }
+    await todoRepository.update(id, data, ownerId);
+    const updatedTodo = await todoRepository.getById(id)
+    return updatedTodo
   },
 
-  delete: async (id) => {
-    await todoRepository.delete(id)
+  delete: async (id, ownerId) => {
+    const todo = await todoRepository.getById(id)
+    if (!todo) {
+      throw new Error(`Todo with id ${id} not found`)
+    }
+    if (todo.user_id !== ownerId) {
+      throw new Error(`You are not the owner of todo with id ${id}`)
+    }
+    await todoRepository.delete(id, ownerId)
   },
 }
