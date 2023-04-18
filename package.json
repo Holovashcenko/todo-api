@@ -19,12 +19,15 @@
   "author": "Holovashchenko Vladyslav",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.0",
     "dotenv": "^16.0.3",
     "fastify": "^4.15.0",
+    "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.2",
     "pg": "^8.10.0"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@types/dotenv": "^8.2.0",
     "@types/node": "^18.15.11",
     "nodemon": "^2.0.22",

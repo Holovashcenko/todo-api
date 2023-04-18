@@ -1,5 +1,6 @@
 import knex from 'knex';
 import { User } from './users.entity.js';
+import bcrypt from 'bcrypt';
 
 import config from '../../../knexfile.js'
 
@@ -28,4 +29,9 @@ export const userRepository = {
   async delete(id: number): Promise<void> {
     await db('users').where({ id }).delete();
   },
+
+  async comparePassword(id: number, password: string): Promise<boolean> {
+    const [user] = await db.select('password').from('users').where({ id });
+    return bcrypt.compare(password, user.password);
+  }
 };

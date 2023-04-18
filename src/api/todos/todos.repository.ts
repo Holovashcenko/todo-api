@@ -8,8 +8,8 @@ interface ITodoRepository {
   getAll: () => Promise<Todo[]>
   create: (data: Omit<Todo, 'id'>) => Promise<Todo>
   getById: (id: number) => Promise<Todo | undefined>
-  update: (id: number, data: Partial<Todo>) => Promise<void>
-  delete: (id: number) => Promise<void>
+  update: (id: number, data: Partial<Todo>, userId: number) => Promise<void>
+  delete: (id: number, userId: number) => Promise<void>
 }
 
 export const todoRepository: ITodoRepository = {
@@ -28,11 +28,11 @@ export const todoRepository: ITodoRepository = {
     return todo
   },
 
-  update: async (id, data) => {
-    await db('todos').where('id', id).update(data)
+  update: async (id, data, userId) => {
+    await db('todos').where('id', id).andWhere('user_id', userId).update(data)
   },
 
-  delete: async (id) => {
-    await db('todos').where('id', id).del()
+  delete: async (id, userId) => {
+    await db('todos').where('id', id).andWhere('user_id', userId).del()
   },
 }
